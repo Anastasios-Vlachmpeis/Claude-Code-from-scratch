@@ -15,7 +15,14 @@ def main():
     p.add_argument("-p", required=True)
     args = p.parse_args()
 
-    messages = [{"role": "user", "content": args.p}]
+    # Extra content to ensure the model doesn't give
+    # some random response like when asked the following:
+    # "Please compute 10 + 1. Respond with only a number."
+    # Quote:
+    # I need to clarify that I don't have a calculator tool available,
+    # but I can compute this for you directly:
+    # 10 + 1 = 11
+    messages = [{"role": "system", "content": "You are a helpful assistant. Follow the user's instructions precisely."},{"role": "user", "content": args.p}]
 
     if not API_KEY:
         raise RuntimeError("OPENROUTER_API_KEY is not set")
@@ -61,6 +68,9 @@ def main():
             elif name == "Bash":
                 exBash = subprocess.run(jsonArgs["command"],capture_output=True,shell=True)
                 contents = exBash.stdout.decode("utf-8") + exBash.stderr.decode("utf-8")
+
+            #print(f"Tool called: {name}", file=sys.stderr)
+            #print(f"Tool result: {contents}", file=sys.stderr)
 
             messages.append({
                 "role": "tool",
