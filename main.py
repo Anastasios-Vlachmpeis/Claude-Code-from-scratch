@@ -1,8 +1,9 @@
 import argparse
 import json
 import os
+import subprocess
 import sys
-from toolsArray import toolsAr
+from .toolsArray import toolsAr
 from openai import OpenAI
 
 API_KEY = os.getenv("OPENROUTER_API_KEY")
@@ -46,15 +47,20 @@ def main():
         for tool_call in chMessage.tool_calls:
             name = tool_call.function.name
             funArgs = tool_call.function.arguments
+            jsonArgs = json.loads(funArgs)
 
             if name == "Read":
-                jsonArgs = json.loads(funArgs)
                 with open(jsonArgs["file_path"]) as file:
                     contents = file.read()
 
             elif name == "Write":
-                with open(jsonArgs["file_path"], "w") as file:
-                    file.write(jsonArgs["content"])
+                with (open(jsonArgs["file_path"], "w") as file):
+                    contents = jsonArgs["content"]
+                    file.write(contents)
+
+            elif name == "Bash":
+                exBash = subprocess.run(jsonArgs["command"],capture_output=True,shell=True)
+                contents = exBash.stdout.decode("utf-8") + exBash.stderr.decode("utf-8")
 
             messages.append({
                 "role": "tool",
