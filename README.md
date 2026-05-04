@@ -1,6 +1,6 @@
 # Claude Code from scratch
 
-A minimal Python implementation of the AI coding assistant, built from the ground up. The goal was to understand how tools like Claude Code actually work under the hood (agent loops, tool execution, LLM communication) by building one myself.
+A minimal Python implementation of the AI coding assistant, built from the ground up. The goal is to understand how tools like Claude Code actually work under the hood (agent loops, tool execution, LLM communication) by building one myself!
 
 ## What it does
 
